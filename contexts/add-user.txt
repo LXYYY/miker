@@ -1,0 +1,8 @@
+RUN groupadd --gid <user_gid> <user_name> \
+    && useradd --uid <user_gid> --gid <user_gid> -m <user_name> \
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+RUN usermod -a -G dialout <user_name>
+RUN yes <password> | passwd <user_name>
