@@ -59,13 +59,13 @@ def gen_text_to_add_entrypoint(entrypoints):
 
 def main():
     package_list = ["perception", "desktop"]
-    cmd = ['/bin/bash']
+    cmd = ['CMD ["/bin/bash"]']
     merged_entrypoint_str = []
     base_image = ''
     ros_version = ''
     image_name = ''
     image_dir_path = os.path.abspath('dockers')
-    cmd_type = ['CMD ["bash"]']
+    cmd_type = ['bash']
 
     print("Welcome to Miker Dockerfile generator!")
 
