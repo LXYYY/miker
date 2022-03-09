@@ -65,7 +65,7 @@ def main():
     ros_version = ''
     image_name = ''
     image_dir_path = os.path.abspath('dockers')
-    cmd_type = ['bash']
+    cmd_type = ['CMD ["bash"]']
 
     print("Welcome to Miker Dockerfile generator!")
 
@@ -126,38 +126,37 @@ def main():
     if if_sshd == 'y':
         [ssh_config_str, sshd_cmd] = gen_text_and_cmd_for_ssh_config()
         cmd_type.append('sshd')
+        cmd = cmd + (sshd_cmd)
         str_lists = str_lists + ssh_config_str
 
     # config entrypoint
     copy_entrypoint_str, merged_entrypoint_str = gen_text_to_add_entrypoint(
         ['ros_entrypoint.sh'])
 
+    str_lists = str_lists + copy_entrypoint_str
+
     str_lists.append('COPY entrypoint.sh /\n')
     str_lists.append('ENTRYPOINT [ "/entrypoint.sh" ]\n')
 
-
-    str_lists = str_lists + copy_entrypoint_str
-
     print("Please choose CMD:")
     cmd_opt_str = ''
-    for cmd in cmd_type:
-        cmd_opt_str += '  {} - {}\n'.format(cmd_type.index(cmd) + 1, cmd)
+    for cmd_t in cmd_type:
+        cmd_opt_str += '  {} - {}\n'.format(cmd_type.index(cmd_t) + 1, cmd_t)
     cmd_n = input(cmd_opt_str)
-    str_lists.append('CMD ' + cmd_type[int(cmd_n) - 1])
+    str_lists.append(cmd[int(cmd_n) - 1])
 
     print(str_lists)
 
-
     os.mkdir(image_dir_path)
 
-    dockerfile = open(os.path.join(image_dir_path,'Dockerfile'), 'w')
+    dockerfile = open(os.path.join(image_dir_path, 'Dockerfile'), 'w')
     for str in str_lists:
         dockerfile.write(str + '\n\n')
     dockerfile.close()
 
-    entrypoint_file = open(os.path.join(image_dir_path,'entrypoints.sh'), 'w')
+    entrypoint_file = open(os.path.join(image_dir_path, 'entrypoints.sh'), 'w')
     for entrypoint in merged_entrypoint_str:
-        entrypoint_file.write('source ' + entrypoint + '\n')
+        entrypoint_file.write(entrypoint + '\n')
     entrypoint_file.close()
 
 
